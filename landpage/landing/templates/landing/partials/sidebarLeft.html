@@ -1,0 +1,152 @@
+<aside
+    id="sidebar"
+    class="sidebar-left"
+    aria-hidden="true"
+>
+
+    <div class="sidebar-header">
+
+        <span class="sidebar-label">
+            REFINE
+        </span>
+
+        <button
+            id="sidebar-close"
+            class="sidebar-close"
+            type="button"
+            aria-label="Close filters"
+        >
+            ×
+        </button>
+
+    </div>
+
+
+    <div class="sidebar-content">
+
+        <section class="filter-group">
+
+            <h2 class="filter-heading">
+                DEGREE PROGRAM
+            </h2>
+
+            <select
+                class="filter-select"
+                name="degree_program"
+            >
+                <option value="">
+                    All degree programs
+                </option>
+
+                <option value="computer-science">
+                    Computer Science
+                </option>
+
+                <option value="business">
+                    Business Administration
+                </option>
+
+                <option value="mathematics">
+                    Mathematics
+                </option>
+            </select>
+
+        </section>
+
+
+        <section class="filter-group">
+
+            <h2 class="filter-heading">
+                CAREER PATH
+            </h2>
+
+            <select
+                class="filter-select"
+                name="career_path"
+            >
+                <option value="">
+                    All career paths
+                </option>
+
+                <option value="software-development">
+                    Software Development
+                </option>
+
+                <option value="cybersecurity">
+                    Cybersecurity
+                </option>
+
+                <option value="data-science">
+                    Data Science
+                </option>
+            </select>
+
+        </section>
+
+
+        <section class="filter-group">
+
+            <h2 class="filter-heading">
+                FORM OF RESOURCE
+            </h2>
+
+            <label class="filter-option">
+                <input
+                    type="checkbox"
+                    name="resource_type"
+                    value="video"
+                >
+                <span>Video</span>
+            </label>
+
+            <label class="filter-option">
+                <input
+                    type="checkbox"
+                    name="resource_type"
+                    value="article"
+                >
+                <span>Article</span>
+            </label>
+
+            <label class="filter-option">
+                <input
+                    type="checkbox"
+                    name="resource_type"
+                    value="tutorial"
+                >
+                <span>Tutorial</span>
+            </label>
+
+            <label class="filter-option">
+                <input
+                    type="checkbox"
+                    name="resource_type"
+                    value="documentation"
+                >
+                <span>Documentation</span>
+            </label>
+
+        </section>
+
+
+        <button
+            class="filter-submit"
+            type="button"
+        >
+            Show 16 resources
+        </button>
+
+    </div>
+
+</aside>
+
+
+<button
+    id="sidebar-open"
+    class="sidebar-open"
+    type="button"
+    aria-label="Open filters"
+    aria-controls="sidebar"
+>
+    ⚙
+</button>

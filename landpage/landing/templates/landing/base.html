@@ -1,0 +1,30 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}Career and Lifelong Learning Pathway{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'landing/style.css' %}">
+</head>
+
+<body>
+
+    {% include "landing/partials/topbar.html" %}
+    {% include "landing/partials/sidebarLeft.html" %}
+
+    <div class="page-layout">
+
+        <main class="main-content">
+            {% block content %}
+            {% endblock %}
+        </main>
+
+    </div>
+
+    <script src="{% static 'landing/main.js' %}"></script>
+
+</body>
+</html>
