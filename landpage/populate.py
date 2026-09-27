@@ -1,15 +1,26 @@
+import os
+
+os.environ.setdefault(
+    "DJANGO_SETTINGS_MODULE",
+    "landpage.settings",
+)
+
+import django
+
+django.setup()
+
 from django.contrib.auth import get_user_model
 from django.apps import apps
 from django.utils import timezone
 from datetime import timedelta
 
 
+
 # ---------------------------------------------------------
 # Models
 # ---------------------------------------------------------
 
-User = get_user_model()
-
+User = apps.get_model("landing", "User")
 Source = apps.get_model("landing", "Source")
 PriceModel = apps.get_model("landing", "PriceModel")
 Category = apps.get_model("landing", "Category")
