@@ -198,6 +198,22 @@
                 Apply
             </button>
 
+            <!-- ADDED: Swap to the other mode's last cached result set. This is
+                 intentionally a separate GET action so it never submits the current
+                 search controls or triggers another Resource Discovery request. -->
+            {% if swap_target %}
+                <button
+                    class="search-swap-button"
+                    type="submit"
+                    name="swap_to"
+                    value="{{ swap_target }}"
+                    formnovalidate
+                >
+                    <span aria-hidden="true">&#8644;</span>
+                    {{ swap_label }}
+                </button>
+            {% endif %}
+
         </div>
 
     </form>
