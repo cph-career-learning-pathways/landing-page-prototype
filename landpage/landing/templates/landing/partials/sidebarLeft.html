@@ -24,129 +24,418 @@
 
     <div class="sidebar-content">
 
+        <!-- SKILLS -->
+
+        <section class="filter-group">
+
+            <h2 class="filter-heading">
+                SKILLS
+            </h2>
+
+            <div class="sidebar-filter-dropdown" data-sidebar-dropdown>
+
+                <button
+                    class="filter-dropdown-button"
+                    type="button"
+                    data-sidebar-dropdown-button
+                    aria-expanded="false"
+                >
+                    Select skills
+                    <span
+                        class="filter-dropdown-count"
+                        data-sidebar-selection-count
+                        hidden
+                    >0</span>
+                    <span aria-hidden="true">&#9662;</span>
+                </button>
+
+                <div
+                    class="filter-dropdown-menu"
+                    data-sidebar-dropdown-menu
+                    hidden
+                >
+
+                    {% for category in skill_options %}
+                        <label class="filter-option">
+                            <input
+                                type="checkbox"
+                                name="skill"
+                                value="{{ category.category_name }}"
+                                {% if category.category_name in selected_skills %}
+                                    checked
+                                {% endif %}
+                            >
+                            <span>{{ category.category_name }}</span>
+                        </label>
+                    {% empty %}
+                        <p class="category-filter-empty">
+                            No skills available.
+                        </p>
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- DEGREE PROGRAM -->
+
         <section class="filter-group">
 
             <h2 class="filter-heading">
                 DEGREE PROGRAM
             </h2>
 
-            <select
-                class="filter-select"
-                name="degree_program"
-            >
-                <option value="">
-                    All degree programs
-                </option>
+            <div class="sidebar-filter-dropdown" data-sidebar-dropdown>
 
-                <option value="computer-science">
-                    Computer Science
-                </option>
+                <button
+                    class="filter-dropdown-button"
+                    type="button"
+                    data-sidebar-dropdown-button
+                    aria-expanded="false"
+                >
+                    Select degree programs
+                    <span
+                        class="filter-dropdown-count"
+                        data-sidebar-selection-count
+                        hidden
+                    >0</span>
+                    <span aria-hidden="true">&#9662;</span>
+                </button>
 
-                <option value="business">
-                    Business Administration
-                </option>
+                <div
+                    class="filter-dropdown-menu"
+                    data-sidebar-dropdown-menu
+                    hidden
+                >
 
-                <option value="mathematics">
-                    Mathematics
-                </option>
-            </select>
+                    {% for category in degree_program_options %}
+                        <label class="filter-option">
+                            <input
+                                type="checkbox"
+                                name="degree_program"
+                                value="{{ category.category_name }}"
+                                {% if category.category_name in selected_degree_programs %}
+                                    checked
+                                {% endif %}
+                            >
+                            <span>{{ category.category_name }}</span>
+                        </label>
+                    {% empty %}
+                        <p class="category-filter-empty">
+                            No degree programs available.
+                        </p>
+                    {% endfor %}
+
+                </div>
+
+            </div>
 
         </section>
 
+
+        <!-- CAREER FIELD -->
 
         <section class="filter-group">
 
             <h2 class="filter-heading">
-                CAREER PATH
+                CAREER FIELD
             </h2>
 
-            <select
-                class="filter-select"
-                name="career_path"
-            >
-                <option value="">
-                    All career paths
-                </option>
+            <div class="sidebar-filter-dropdown" data-sidebar-dropdown>
 
-                <option value="software-development">
-                    Software Development
-                </option>
+                <button
+                    class="filter-dropdown-button"
+                    type="button"
+                    data-sidebar-dropdown-button
+                    aria-expanded="false"
+                >
+                    Select career fields
+                    <span
+                        class="filter-dropdown-count"
+                        data-sidebar-selection-count
+                        hidden
+                    >0</span>
+                    <span aria-hidden="true">&#9662;</span>
+                </button>
 
-                <option value="cybersecurity">
-                    Cybersecurity
-                </option>
+                <div
+                    class="filter-dropdown-menu"
+                    data-sidebar-dropdown-menu
+                    hidden
+                >
 
-                <option value="data-science">
-                    Data Science
-                </option>
-            </select>
+                    {% for category in career_field_options %}
+                        <label class="filter-option">
+                            <input
+                                type="checkbox"
+                                name="career_field"
+                                value="{{ category.category_name }}"
+                                {% if category.category_name in selected_career_fields %}
+                                    checked
+                                {% endif %}
+                            >
+                            <span>{{ category.category_name }}</span>
+                        </label>
+                    {% empty %}
+                        <p class="category-filter-empty">
+                            No career fields available.
+                        </p>
+                    {% endfor %}
+
+                </div>
+
+            </div>
 
         </section>
 
 
+        <!-- PRICE -->
+
         <section class="filter-group">
 
+            <h2 class="filter-heading">
+                PRICE
+            </h2>
+
+            <div class="sidebar-filter-dropdown" data-sidebar-dropdown>
+
+                <button
+                    class="filter-dropdown-button"
+                    type="button"
+                    data-sidebar-dropdown-button
+                    aria-expanded="false"
+                >
+                    Select price models
+                    <span
+                        class="filter-dropdown-count"
+                        data-sidebar-selection-count
+                        hidden
+                    >0</span>
+                    <span aria-hidden="true">&#9662;</span>
+                </button>
+
+                <div
+                    class="filter-dropdown-menu"
+                    data-sidebar-dropdown-menu
+                    hidden
+                >
+
+                    {% for price in price_options %}
+                        <label class="filter-option">
+                            <input
+                                type="checkbox"
+                                name="price"
+                                value="{{ price.price_model_name }}"
+                                {% if price.price_model_name in selected_prices %}
+                                    checked
+                                {% endif %}
+                            >
+                            <span>
+                                {{ price.price_model_name|title }}
+                            </span>
+                        </label>
+                    {% empty %}
+                        <p class="category-filter-empty">
+                            No price options available.
+                        </p>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <!-- SOURCE -->
+        <section class="filter-group">
+            <h2 class="filter-heading">
+                SOURCE
+            </h2>
+
+            <div class="sidebar-filter-dropdown" data-sidebar-dropdown>
+                <button
+                    class="filter-dropdown-button"
+                    type="button"
+                    data-sidebar-dropdown-button
+                    aria-expanded="false">
+                    Select sources
+                    <span
+                        class="filter-dropdown-count"
+                        data-sidebar-selection-count
+                        hidden
+                    >0</span>
+                    <span aria-hidden="true">&#9662;</span>
+                </button>
+                <div
+                    class="filter-dropdown-menu"
+                    data-sidebar-dropdown-menu
+                    hidden>
+                    {% for source in source_options %}
+                        <label class="filter-option">
+                            <input
+                                type="checkbox"
+                                name="source"
+                                value="{{ source.source_name }}"
+                                {% if source.source_name in selected_sources %}
+                                    checked
+                                {% endif %}>
+                            <span>{{ source.source_name }}</span>
+                        </label>
+                    {% empty %}
+                        <p class="category-filter-empty">
+                            No sources available.
+                        </p>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <!-- RESOURCE TYPE -->
+        <section class="filter-group">
             <h2 class="filter-heading">
                 FORM OF RESOURCE
             </h2>
 
-            <label class="filter-option">
-                <input
-                    type="checkbox"
-                    name="resource_type"
-                    value="video"
-                >
-                <span>Video</span>
-            </label>
-
-            <label class="filter-option">
-                <input
-                    type="checkbox"
-                    name="resource_type"
-                    value="article"
-                >
-                <span>Article</span>
-            </label>
-
-            <label class="filter-option">
-                <input
-                    type="checkbox"
-                    name="resource_type"
-                    value="tutorial"
-                >
-                <span>Tutorial</span>
-            </label>
-
-            <label class="filter-option">
-                <input
-                    type="checkbox"
-                    name="resource_type"
-                    value="documentation"
-                >
-                <span>Documentation</span>
-            </label>
-
+            <div class="sidebar-filter-dropdown" data-sidebar-dropdown>
+                <button
+                    class="filter-dropdown-button"
+                    type="button"
+                    data-sidebar-dropdown-button
+                    aria-expanded="false">
+                    Select resource types
+                    <span
+                        class="filter-dropdown-count"
+                        data-sidebar-selection-count
+                        hidden
+                    >0</span>
+                    <span aria-hidden="true">&#9662;</span>
+                </button>
+                <div
+                    class="filter-dropdown-menu"
+                    data-sidebar-dropdown-menu
+                    hidden>
+                    {% for resource_type in resource_type_options %}
+                        <label class="filter-option">
+                            <input
+                                type="checkbox"
+                                name="resource_type"
+                                value="{{ resource_type }}"
+                                {% if resource_type in selected_resource_types %}
+                                    checked
+                                {% endif %}>
+                            <span>{{ resource_type|title }}</span>
+                        </label>
+                    {% empty %}
+                        <p class="category-filter-empty">
+                            No resource types available.
+                        </p>
+                    {% endfor %}
+                </div>
+            </div>
         </section>
 
 
+        <!-- FORMAT -->
+        <section class="filter-group">
+            <h2 class="filter-heading">
+                FORMAT
+            </h2>
+            <div class="sidebar-filter-dropdown" data-sidebar-dropdown>
+                <button
+                    class="filter-dropdown-button"
+                    type="button"
+                    data-sidebar-dropdown-button
+                    aria-expanded="false">
+                    Select formats
+                    <span
+                        class="filter-dropdown-count"
+                        data-sidebar-selection-count
+                        hidden
+                    >0</span>
+                    <span aria-hidden="true">&#9662;</span>
+                </button>
+                <div
+                    class="filter-dropdown-menu"
+                    data-sidebar-dropdown-menu
+                    hidden>
+                    {% for resource_format in resource_format_options %}
+                        <label class="filter-option">
+                            <input
+                                type="checkbox"
+                                name="format"
+                                value="{{ resource_format }}"
+                                {% if resource_format in selected_formats %}
+                                    checked
+                                {% endif %}>
+                            <span>{{ resource_format|title }}</span>
+                        </label>
+                    {% empty %}
+                        <p class="category-filter-empty">
+                            No formats available.
+                        </p>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+
+        <!-- DIFFICULTY -->
+        <section class="filter-group">
+            <h2 class="filter-heading">
+                DIFFICULTY
+            </h2>
+            <div class="sidebar-filter-dropdown" data-sidebar-dropdown>
+                <button
+                    class="filter-dropdown-button"
+                    type="button"
+                    data-sidebar-dropdown-button
+                    aria-expanded="false">
+                    Select difficulty
+                    <span
+                        class="filter-dropdown-count"
+                        data-sidebar-selection-count
+                        hidden
+                    >0</span>
+                    <span aria-hidden="true">&#9662;</span>
+                </button>
+                <div
+                    class="filter-dropdown-menu"
+                    data-sidebar-dropdown-menu
+                    hidden>
+                    {% for difficulty in difficulty_options %}
+                        <label class="filter-option">
+                            <input
+                                type="checkbox"
+                                name="difficulty"
+                                value="{{ difficulty.filter_name }}"
+                                {% if difficulty.filter_name in selected_difficulties %}
+                                    checked
+                                {% endif %}>
+                            <span>{{ difficulty.filter_name }}</span>
+                        </label>
+                    {% empty %}
+                        <p class="category-filter-empty">
+                            No difficulty options available.
+                        </p>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
         <button
             class="filter-submit"
-            type="button"
-        >
-            Show 16 resources
+            type="submit"
+            form="search-form"
+            id="sidebar-filter-submit">
+            Apply
         </button>
-
     </div>
-
 </aside>
-
 
 <button
     id="sidebar-open"
     class="sidebar-open"
     type="button"
     aria-label="Open filters"
-    aria-controls="sidebar"
->
+    aria-controls="sidebar">
     ⚙
 </button>

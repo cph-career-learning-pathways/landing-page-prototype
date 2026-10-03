@@ -4,7 +4,14 @@ from django.urls import reverse
 
 from resource_discovery.search import search_resources
 
-from .models import Category, CuratedCollection
+from .models import (
+    Category,
+    CuratedCollection,
+    Filter,
+    PriceModel,
+    Resource,
+    Source,
+)
 
 
 LAST_COLLECTION_SEARCH = "last_collection_search"
@@ -29,35 +36,127 @@ def format_duration(seconds):
     return f"{hours:.1f} hr"
 
 
-def get_category_options():
-    """Load the three topbar taxonomy groups from the database."""
+# def get_category_options():
+#     """Load the three topbar taxonomy groups from the database."""
+#     return {
+#         "skill_options": Category.objects.filter(
+#             category_type="Skill",
+#             is_active=True,
+#         ).order_by("category_name"),
+#         "degree_program_options": Category.objects.filter(
+#             category_type="Degree Program",
+#             is_active=True,
+#         ).order_by("category_name"),
+#         "career_field_options": Category.objects.filter(
+#             category_type="Career Field",
+#             is_active=True,
+#         ).order_by("category_name"),
+#     }
+
+def get_filter_options():
+    """Load all filter options used by the topbar and left sidebar."""
+
     return {
+        # Category taxonomy
         "skill_options": Category.objects.filter(
             category_type="Skill",
             is_active=True,
         ).order_by("category_name"),
+
         "degree_program_options": Category.objects.filter(
             category_type="Degree Program",
             is_active=True,
         ).order_by("category_name"),
+
         "career_field_options": Category.objects.filter(
             category_type="Career Field",
             is_active=True,
         ).order_by("category_name"),
+
+        # Price
+        "price_options": PriceModel.objects.filter(
+            is_active=True,
+        ).order_by("price_model_name"),
+
+        # Sources
+        "source_options": Source.objects.filter(
+            is_active=True,
+        ).order_by("source_name"),
+
+        # Resource fields
+        "resource_type_options": (
+            Resource.objects
+            .exclude(resource_type__isnull=True)
+            .exclude(resource_type="")
+            .values_list("resource_type", flat=True)
+            .distinct()
+            .order_by("resource_type")
+        ),
+
+        "resource_format_options": (
+            Resource.objects
+            .exclude(resource_format__isnull=True)
+            .exclude(resource_format="")
+            .values_list("resource_format", flat=True)
+            .distinct()
+            .order_by("resource_format")
+        ),
+
+        # ResourceFilter / Filter model
+        "difficulty_options": Filter.objects.filter(
+            is_active=True,
+        ).order_by("filter_name"),
     }
 
+# def apply_collection_category_filters(
+#     collections,
+#     selected_skills,
+#     selected_degree_programs,
+#     selected_career_fields,
+# ):
+#     """Filter collections through the categories of their contained resources.
 
-def apply_collection_category_filters(
+#     Values within one taxonomy group are OR choices via __in. Chaining the
+#     groups gives AND behavior across Skill, Degree Program, and Career Field.
+#     """
+#     if selected_skills:
+#         collections = collections.filter(
+#             resources__categories__category_type="Skill",
+#             resources__categories__category_name__in=selected_skills,
+#         )
+
+#     if selected_degree_programs:
+#         collections = collections.filter(
+#             resources__categories__category_type="Degree Program",
+#             resources__categories__category_name__in=selected_degree_programs,
+#         )
+
+#     if selected_career_fields:
+#         collections = collections.filter(
+#             resources__categories__category_type="Career Field",
+#             resources__categories__category_name__in=selected_career_fields,
+#         )
+
+#     return collections
+
+def apply_collection_filters(
     collections,
     selected_skills,
     selected_degree_programs,
     selected_career_fields,
+    selected_prices,
+    selected_sources,
+    selected_resource_types,
+    selected_formats,
+    selected_difficulties,
 ):
-    """Filter collections through the categories of their contained resources.
-
-    Values within one taxonomy group are OR choices via __in. Chaining the
-    groups gives AND behavior across Skill, Degree Program, and Career Field.
     """
+    Apply all sidebar filters to collections.
+
+    Multiple values within one filter group use OR behavior.
+    Different filter groups use AND behavior.
+    """
+
     if selected_skills:
         collections = collections.filter(
             resources__categories__category_type="Skill",
@@ -76,7 +175,32 @@ def apply_collection_category_filters(
             resources__categories__category_name__in=selected_career_fields,
         )
 
-    return collections
+    if selected_prices:
+        collections = collections.filter(
+            resources__price_model__price_model_name__in=selected_prices,
+        )
+
+    if selected_sources:
+        collections = collections.filter(
+            resources__source__source_name__in=selected_sources,
+        )
+
+    if selected_resource_types:
+        collections = collections.filter(
+            resources__resource_type__in=selected_resource_types,
+        )
+
+    if selected_formats:
+        collections = collections.filter(
+            resources__resource_format__in=selected_formats,
+        )
+
+    if selected_difficulties:
+        collections = collections.filter(
+            resources__resourcefilter__filter__filter_name__in=selected_difficulties,
+        )
+
+    return collections.distinct()
 
 
 def prepare_collection_cards(collections):
@@ -106,6 +230,11 @@ def search_local_collections(
     selected_skills,
     selected_degree_programs,
     selected_career_fields,
+    selected_prices,
+    selected_sources,
+    selected_resource_types,
+    selected_formats,
+    selected_difficulties,
 ):
     """Return active CuratedCollection objects for Collections mode.
 
@@ -125,11 +254,16 @@ def search_local_collections(
             | Q(collection_description__icontains=search_query)
         )
 
-    collections = apply_collection_category_filters(
+    collections = apply_collection_filters(
         collections,
         selected_skills,
         selected_degree_programs,
         selected_career_fields,
+        selected_prices,
+        selected_sources,
+        selected_resource_types,
+        selected_formats,
+        selected_difficulties,
     )
 
     collections = (
@@ -140,7 +274,6 @@ def search_local_collections(
     )
 
     return prepare_collection_cards(collections)
-
 
 def restore_local_collections(collection_ids):
     """Restore cached Collections results using inexpensive local IDs."""
@@ -199,6 +332,11 @@ def build_search_state(
     selected_skills,
     selected_degree_programs,
     selected_career_fields,
+    selected_prices,
+    selected_sources,
+    selected_resource_types,
+    selected_formats,
+    selected_difficulties,
 ):
     """Return the serializable form state shared by both cached search modes."""
     return {
@@ -206,6 +344,11 @@ def build_search_state(
         "skills": list(selected_skills),
         "degree_programs": list(selected_degree_programs),
         "career_fields": list(selected_career_fields),
+        "prices": list(selected_prices),
+        "sources": list(selected_sources),
+        "resource_types": list(selected_resource_types),
+        "formats": list(selected_formats),
+        "difficulties": list(selected_difficulties),
     }
 
 
@@ -243,16 +386,31 @@ def index(request):
 
     if cached_search:
         search_query = cached_search.get("query", "")
+
         selected_skills = cached_search.get("skills", [])
         selected_degree_programs = cached_search.get("degree_programs", [])
         selected_career_fields = cached_search.get("career_fields", [])
+
+        selected_prices = cached_search.get("prices", [])
+        selected_sources = cached_search.get("sources", [])
+        selected_resource_types = cached_search.get("resource_types", [])
+        selected_formats = cached_search.get("formats", [])
+        selected_difficulties = cached_search.get("difficulties", [])
+
     else:
         search_query = request.GET.get("search", "").strip()
+
         selected_skills = request.GET.getlist("skill")
         selected_degree_programs = request.GET.getlist("degree_program")
         selected_career_fields = request.GET.getlist("career_field")
 
-    category_options = get_category_options()
+        selected_prices = request.GET.getlist("price")
+        selected_sources = request.GET.getlist("source")
+        selected_resource_types = request.GET.getlist("resource_type")
+        selected_formats = request.GET.getlist("format")
+        selected_difficulties = request.GET.getlist("difficulty")
+
+    filter_options = get_filter_options()
 
     collections = []
     discovery_results = []
@@ -282,11 +440,16 @@ def index(request):
                     selected_career_fields,
                 )
 
-                web_cache = build_search_state(
+                web_cache = build_search_state(                 
                     search_query,
                     selected_skills,
                     selected_degree_programs,
                     selected_career_fields,
+                    selected_prices,
+                    selected_sources,
+                    selected_resource_types,
+                    selected_formats,
+                    selected_difficulties,
                 )
                 web_cache.update(
                     {
@@ -310,13 +473,23 @@ def index(request):
                 selected_skills,
                 selected_degree_programs,
                 selected_career_fields,
+                selected_prices,
+                selected_sources,
+                selected_resource_types,
+                selected_formats,
+                selected_difficulties,
             )
 
-            collection_cache = build_search_state(
+            collection_cache = build_search_state(     
                 search_query,
                 selected_skills,
                 selected_degree_programs,
                 selected_career_fields,
+                selected_prices,
+                selected_sources,
+                selected_resource_types,
+                selected_formats,
+                selected_difficulties,
             )
             collection_cache["collection_ids"] = [
                 collection.collection_id
@@ -342,21 +515,29 @@ def index(request):
         swap_label = "Last Web Search" if swap_target else None
 
     context = {
-        # ADDED: Collections mode now exposes collection-level cards/counts.
-        "collections": collections,
-        "collection_count": len(collections),
-        "discovery_results": discovery_results,
-        "discovery_count": len(discovery_results),
-        "discovery_error": discovery_error,
-        "discovery_attempted": discovery_attempted,
-        "selected_skills": selected_skills,
-        "selected_degree_programs": selected_degree_programs,
-        "selected_career_fields": selected_career_fields,
-        "search_query": search_query,
-        "search_mode": search_mode,
-        "swap_target": swap_target,
-        "swap_label": swap_label,
-        **category_options,
-    }
+    "collections": collections,
+    "collection_count": len(collections),
+    "discovery_results": discovery_results,
+    "discovery_count": len(discovery_results),
+    "discovery_error": discovery_error,
+    "discovery_attempted": discovery_attempted,
+
+    "selected_skills": selected_skills,
+    "selected_degree_programs": selected_degree_programs,
+    "selected_career_fields": selected_career_fields,
+
+    "selected_prices": selected_prices,
+    "selected_sources": selected_sources,
+    "selected_resource_types": selected_resource_types,
+    "selected_formats": selected_formats,
+    "selected_difficulties": selected_difficulties,
+
+    "search_query": search_query,
+    "search_mode": search_mode,
+    "swap_target": swap_target,
+    "swap_label": swap_label,
+
+    **filter_options,
+}
 
     return render(request, "landing/index.html", context)
