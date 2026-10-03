@@ -242,30 +242,22 @@
                             No price options available.
                         </p>
                     {% endfor %}
-
                 </div>
-
             </div>
-
         </section>
 
-
         <!-- SOURCE -->
-
         <section class="filter-group">
-
             <h2 class="filter-heading">
                 SOURCE
             </h2>
 
             <div class="sidebar-filter-dropdown" data-sidebar-dropdown>
-
                 <button
                     class="filter-dropdown-button"
                     type="button"
                     data-sidebar-dropdown-button
-                    aria-expanded="false"
-                >
+                    aria-expanded="false">
                     Select sources
                     <span
                         class="filter-dropdown-count"
@@ -274,13 +266,10 @@
                     >0</span>
                     <span aria-hidden="true">&#9662;</span>
                 </button>
-
                 <div
                     class="filter-dropdown-menu"
                     data-sidebar-dropdown-menu
-                    hidden
-                >
-
+                    hidden>
                     {% for source in source_options %}
                         <label class="filter-option">
                             <input
@@ -289,8 +278,7 @@
                                 value="{{ source.source_name }}"
                                 {% if source.source_name in selected_sources %}
                                     checked
-                                {% endif %}
-                            >
+                                {% endif %}>
                             <span>{{ source.source_name }}</span>
                         </label>
                     {% empty %}
@@ -298,30 +286,22 @@
                             No sources available.
                         </p>
                     {% endfor %}
-
                 </div>
-
             </div>
-
         </section>
 
-
         <!-- RESOURCE TYPE -->
-
         <section class="filter-group">
-
             <h2 class="filter-heading">
                 FORM OF RESOURCE
             </h2>
 
             <div class="sidebar-filter-dropdown" data-sidebar-dropdown>
-
                 <button
                     class="filter-dropdown-button"
                     type="button"
                     data-sidebar-dropdown-button
-                    aria-expanded="false"
-                >
+                    aria-expanded="false">
                     Select resource types
                     <span
                         class="filter-dropdown-count"
@@ -330,13 +310,10 @@
                     >0</span>
                     <span aria-hidden="true">&#9662;</span>
                 </button>
-
                 <div
                     class="filter-dropdown-menu"
                     data-sidebar-dropdown-menu
-                    hidden
-                >
-
+                    hidden>
                     {% for resource_type in resource_type_options %}
                         <label class="filter-option">
                             <input
@@ -345,8 +322,7 @@
                                 value="{{ resource_type }}"
                                 {% if resource_type in selected_resource_types %}
                                     checked
-                                {% endif %}
-                            >
+                                {% endif %}>
                             <span>{{ resource_type|title }}</span>
                         </label>
                     {% empty %}
@@ -354,30 +330,22 @@
                             No resource types available.
                         </p>
                     {% endfor %}
-
                 </div>
-
             </div>
-
         </section>
 
 
         <!-- FORMAT -->
-
         <section class="filter-group">
-
             <h2 class="filter-heading">
                 FORMAT
             </h2>
-
             <div class="sidebar-filter-dropdown" data-sidebar-dropdown>
-
                 <button
                     class="filter-dropdown-button"
                     type="button"
                     data-sidebar-dropdown-button
-                    aria-expanded="false"
-                >
+                    aria-expanded="false">
                     Select formats
                     <span
                         class="filter-dropdown-count"
@@ -386,13 +354,10 @@
                     >0</span>
                     <span aria-hidden="true">&#9662;</span>
                 </button>
-
                 <div
                     class="filter-dropdown-menu"
                     data-sidebar-dropdown-menu
-                    hidden
-                >
-
+                    hidden>
                     {% for resource_format in resource_format_options %}
                         <label class="filter-option">
                             <input
@@ -401,8 +366,7 @@
                                 value="{{ resource_format }}"
                                 {% if resource_format in selected_formats %}
                                     checked
-                                {% endif %}
-                            >
+                                {% endif %}>
                             <span>{{ resource_format|title }}</span>
                         </label>
                     {% empty %}
@@ -410,30 +374,22 @@
                             No formats available.
                         </p>
                     {% endfor %}
-
                 </div>
-
             </div>
-
         </section>
 
 
         <!-- DIFFICULTY -->
-
         <section class="filter-group">
-
             <h2 class="filter-heading">
                 DIFFICULTY
             </h2>
-
             <div class="sidebar-filter-dropdown" data-sidebar-dropdown>
-
                 <button
                     class="filter-dropdown-button"
                     type="button"
                     data-sidebar-dropdown-button
-                    aria-expanded="false"
-                >
+                    aria-expanded="false">
                     Select difficulty
                     <span
                         class="filter-dropdown-count"
@@ -442,13 +398,10 @@
                     >0</span>
                     <span aria-hidden="true">&#9662;</span>
                 </button>
-
                 <div
                     class="filter-dropdown-menu"
                     data-sidebar-dropdown-menu
-                    hidden
-                >
-
+                    hidden>
                     {% for difficulty in difficulty_options %}
                         <label class="filter-option">
                             <input
@@ -457,8 +410,7 @@
                                 value="{{ difficulty.filter_name }}"
                                 {% if difficulty.filter_name in selected_difficulties %}
                                     checked
-                                {% endif %}
-                            >
+                                {% endif %}>
                             <span>{{ difficulty.filter_name }}</span>
                         </label>
                     {% empty %}
@@ -466,34 +418,24 @@
                             No difficulty options available.
                         </p>
                     {% endfor %}
-
                 </div>
-
             </div>
-
         </section>
-
-
         <button
             class="filter-submit"
             type="submit"
             form="search-form"
-            id="sidebar-filter-submit"
-        >
+            id="sidebar-filter-submit">
             Apply
         </button>
-
     </div>
-
 </aside>
-
 
 <button
     id="sidebar-open"
     class="sidebar-open"
     type="button"
     aria-label="Open filters"
-    aria-controls="sidebar"
->
+    aria-controls="sidebar">
     ⚙
 </button>
