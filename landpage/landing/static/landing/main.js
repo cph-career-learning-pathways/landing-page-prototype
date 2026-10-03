@@ -119,6 +119,158 @@ categoryDropdowns.forEach((dropdown) => {
     });
 });
 
+// ---------------------------------------------------------
+// Sidebar filter dropdowns
+// ---------------------------------------------------------
+
+const sidebarDropdowns =
+    document.querySelectorAll("[data-sidebar-dropdown]");
+
+
+function closeSidebarFilterDropdown(dropdown) {
+    const button = dropdown.querySelector(
+        "[data-sidebar-dropdown-button]"
+    );
+
+    const menu = dropdown.querySelector(
+        "[data-sidebar-dropdown-menu]"
+    );
+
+    if (!button || !menu) {
+        return;
+    }
+
+    button.setAttribute("aria-expanded", "false");
+    menu.hidden = true;
+}
+
+
+function openSidebarFilterDropdown(dropdown) {
+    sidebarDropdowns.forEach((otherDropdown) => {
+        if (otherDropdown !== dropdown) {
+            closeSidebarFilterDropdown(otherDropdown);
+        }
+    });
+
+    categoryDropdowns.forEach(closeCategoryDropdown);
+    closeSearchModeDropdown();
+
+    const button = dropdown.querySelector(
+        "[data-sidebar-dropdown-button]"
+    );
+
+    const menu = dropdown.querySelector(
+        "[data-sidebar-dropdown-menu]"
+    );
+
+    if (!button || !menu) {
+        return;
+    }
+
+    button.setAttribute("aria-expanded", "true");
+    menu.hidden = false;
+}
+
+
+function updateSidebarSelectionCount(dropdown) {
+    const count = dropdown.querySelector(
+        "[data-sidebar-selection-count]"
+    );
+
+    const checkedCount = dropdown.querySelectorAll(
+        'input[type="checkbox"]:checked'
+    ).length;
+
+    if (!count) {
+        return;
+    }
+
+    count.textContent = checkedCount;
+    count.hidden = checkedCount === 0;
+}
+
+
+sidebarDropdowns.forEach((dropdown) => {
+    const button = dropdown.querySelector(
+        "[data-sidebar-dropdown-button]"
+    );
+
+    const checkboxes = dropdown.querySelectorAll(
+        'input[type="checkbox"]'
+    );
+
+    if (!button) {
+        return;
+    }
+
+    button.addEventListener("click", () => {
+        const isOpen =
+            button.getAttribute("aria-expanded") === "true";
+
+        if (isOpen) {
+            closeSidebarFilterDropdown(dropdown);
+        } else {
+            openSidebarFilterDropdown(dropdown);
+        }
+    });
+
+    checkboxes.forEach((checkbox) => {
+        checkbox.addEventListener("change", () => {
+            updateSidebarSelectionCount(dropdown);
+        });
+    });
+
+    updateSidebarSelectionCount(dropdown);
+});
+
+
+// ---------------------------------------------------------
+// Synchronize topbar and sidebar filters
+// ---------------------------------------------------------
+
+const sharedFilterNames = [
+    "skill",
+    "degree_program",
+    "career_field",
+];
+
+
+function synchronizeSharedFilter(filterName, value, checked) {
+    const matchingInputs = document.querySelectorAll(
+        `input[name="${filterName}"][value="${CSS.escape(value)}"]`
+    );
+
+    matchingInputs.forEach((input) => {
+        input.checked = checked;
+    });
+
+    // Update the topbar count.
+    categoryDropdowns.forEach((dropdown) => {
+        updateSelectionCount(dropdown);
+    });
+
+    // Update the sidebar count.
+    sidebarDropdowns.forEach((dropdown) => {
+        updateSidebarSelectionCount(dropdown);
+    });
+}
+
+
+document.querySelectorAll(
+    'input[type="checkbox"][name="skill"], ' +
+    'input[type="checkbox"][name="degree_program"], ' +
+    'input[type="checkbox"][name="career_field"]'
+).forEach((input) => {
+
+    input.addEventListener("change", () => {
+        synchronizeSharedFilter(
+            input.name,
+            input.value,
+            input.checked
+        );
+    });
+
+});
 
 // ---------------------------------------------------------
 // Search mode selector
@@ -285,6 +437,12 @@ document.addEventListener("click", (event) => {
         }
     });
 
+    sidebarDropdowns.forEach((dropdown) => {
+        if (!dropdown.contains(event.target)) {
+            closeSidebarFilterDropdown(dropdown);
+        }
+    });
+
     if (
         searchModeDropdown &&
         !searchModeDropdown.contains(event.target)
@@ -298,6 +456,7 @@ document.addEventListener("click", (event) => {
 document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
         categoryDropdowns.forEach(closeCategoryDropdown);
+        sidebarDropdowns.forEach(closeSidebarFilterDropdown);
         closeSearchModeDropdown();
     }
 });
