@@ -60,27 +60,27 @@ def get_filter_options():
         # Category taxonomy
         "skill_options": Category.objects.filter(
             category_type="Skill",
-            is_active=True,
+            is_active="Y",
         ).order_by("category_name"),
 
         "degree_program_options": Category.objects.filter(
             category_type="Degree Program",
-            is_active=True,
+            is_active="Y",
         ).order_by("category_name"),
 
         "career_field_options": Category.objects.filter(
             category_type="Career Field",
-            is_active=True,
+            is_active="Y",
         ).order_by("category_name"),
 
         # Price
         "price_options": PriceModel.objects.filter(
-            is_active=True,
+            is_active="Y",
         ).order_by("price_model_name"),
 
         # Sources
         "source_options": Source.objects.filter(
-            is_active=True,
+            is_active="Y",
         ).order_by("source_name"),
 
         # Resource fields
@@ -104,7 +104,7 @@ def get_filter_options():
 
         # ResourceFilter / Filter model
         "difficulty_options": Filter.objects.filter(
-            is_active=True,
+            is_active="Y",
         ).order_by("filter_name"),
     }
 
@@ -244,7 +244,7 @@ def search_local_collections(
     """
     collections = (
         CuratedCollection.objects
-        .filter(is_active=True)
+        .filter(is_active="Y")
         .prefetch_related("resources__categories")
     )
 
@@ -282,7 +282,7 @@ def restore_local_collections(collection_ids):
 
     collections = (
         CuratedCollection.objects
-        .filter(collection_id__in=collection_ids, is_active=True)
+        .filter(collection_id__in=collection_ids, is_active="Y")
         .prefetch_related("resources__categories")
         .annotate(resource_count=Count("resources", distinct=True))
     )
@@ -536,8 +536,36 @@ def index(request):
     "search_mode": search_mode,
     "swap_target": swap_target,
     "swap_label": swap_label,
+    "show_skills_card": not any(
+        (
+            search_query,
+            selected_skills,
+            selected_degree_programs,
+            selected_career_fields,
+            selected_prices,
+            selected_sources,
+            selected_resource_types,
+            selected_formats,
+            selected_difficulties,
+        )
+    ),
 
     **filter_options,
 }
 
     return render(request, "landing/index.html", context)
+
+
+def skills(request):
+    """Show every skill category from the existing database."""
+    skill_list = Category.objects.filter(
+        category_type="Skill",
+    ).order_by("category_name")
+    return render(
+        request,
+        "landing/skills.html",
+        {
+            "skills": skill_list,
+            "skill_count": skill_list.count(),
+        },
+    )

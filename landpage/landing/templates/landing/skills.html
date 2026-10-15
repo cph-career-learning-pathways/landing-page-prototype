@@ -1,0 +1,28 @@
+{% extends "landing/base.html" %}
+
+{% block title %}Skills | Career and Lifelong Learning Pathway{% endblock %}
+
+{% block content %}
+<div class="catalog-header">
+    <div class="catalog-heading">
+        <span class="catalog-label">(A) SKILLS</span>
+        <h1 class="catalog-title">All skills</h1>
+    </div>
+
+    <div class="catalog-stats">
+        <span>{{ skill_count }} skill{{ skill_count|pluralize }}</span>
+    </div>
+</div>
+
+<p class="skills-back-link">
+    <a href="{% url 'index' %}">Back to collections</a>
+</p>
+
+<ul class="skills-list">
+    {% for skill in skills %}
+        <li class="skill-item">{{ skill.category_name }}</li>
+    {% empty %}
+        <li class="skills-empty">No skills were found in the database.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

@@ -2,322 +2,216 @@ from django.db import models
 
 
 class User(models.Model):
-    user_id = models.BigAutoField(primary_key=True)
-    user_fname = models.CharField(max_length=100)
-    user_lname = models.CharField(max_length=100)
-    user_email = models.EmailField(max_length=254, unique=True)
-    user_role = models.CharField(max_length=30)
-    user_status = models.CharField(max_length=30)
+    user_id = models.CharField(
+        db_column="acc_id",
+        max_length=8,
+        primary_key=True,
+    )
+    user_fname = models.CharField(db_column="acc_fname", max_length=100)
+    user_lname = models.CharField(db_column="acc_lname", max_length=100)
+    user_email = models.CharField(
+        db_column="acc_email",
+        max_length=50,
+        unique=True,
+    )
+    user_role = models.CharField(db_column="acc_role", max_length=10)
+    user_status = models.CharField(db_column="acc_status", max_length=20)
+
+    class Meta:
+        managed = False
+        db_table = "account"
 
     def __str__(self):
         return f"{self.user_fname} {self.user_lname}"
 
 
 class Source(models.Model):
-    source_id = models.AutoField(primary_key=True)
+    source_id = models.CharField(max_length=8, primary_key=True)
     curator = models.ForeignKey(
         User,
-        on_delete=models.PROTECT,
+        on_delete=models.DO_NOTHING,
         related_name="sources",
     )
-    source_name = models.CharField(max_length=150)
-    source_domain = models.CharField(
-        max_length=253,
-        unique=True,
-    )
-    source_trust = models.CharField(max_length=30)
-    source_add_date = models.DateTimeField(auto_now_add=True)
+    source_name = models.CharField(max_length=50, null=True, blank=True)
+    source_domain = models.CharField(max_length=253, null=True, blank=True)
+    source_trust = models.CharField(max_length=7)
+    source_add_date = models.DateTimeField()
     source_up_date = models.DateTimeField(null=True, blank=True)
-    is_active = models.BooleanField(default=True)
+    is_active = models.CharField(max_length=1)
+
+    class Meta:
+        managed = False
+        db_table = "source"
 
     def __str__(self):
-        return self.source_name
+        return self.source_name or ""
 
 
 class PriceModel(models.Model):
-    price_model_id = models.SmallAutoField(primary_key=True)
-    price_model_name = models.CharField(
-        max_length=50,
-        unique=True,
-    )
-    is_active = models.BooleanField(default=True)
+    price_model_id = models.CharField(max_length=8, primary_key=True)
+    price_model_name = models.CharField(max_length=20, unique=True)
+    is_active = models.CharField(max_length=1)
+
+    class Meta:
+        managed = False
+        db_table = "price_model"
 
     def __str__(self):
         return self.price_model_name
 
 
 class Category(models.Model):
-    category_id = models.AutoField(primary_key=True)
+    category_id = models.CharField(max_length=8, primary_key=True)
     curator = models.ForeignKey(
         User,
-        on_delete=models.PROTECT,
+        on_delete=models.DO_NOTHING,
         related_name="categories",
     )
-    category_type = models.CharField(max_length=30)
-    category_name = models.CharField(max_length=150)
-    category_description = models.TextField(
-        null=True,
-        blank=True,
-    )
-    category_up_date = models.DateTimeField(
-        null=True,
-        blank=True,
-    )
-    category_add_date = models.DateTimeField(auto_now_add=True)
-    is_active = models.BooleanField(default=True)
+    category_type = models.CharField(max_length=20)
+    category_name = models.CharField(max_length=100)
+    is_active = models.CharField(max_length=1)
 
     class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=["category_type", "category_name"],
-                name="unique_category_type_name",
-            )
-        ]
+        managed = False
+        db_table = "category"
+        unique_together = (("category_type", "category_name"),)
 
     def __str__(self):
         return self.category_name
 
 
 class Filter(models.Model):
-    filter_id = models.AutoField(primary_key=True)
+    filter_id = models.CharField(max_length=8, primary_key=True)
     curator = models.ForeignKey(
         User,
-        on_delete=models.PROTECT,
+        on_delete=models.DO_NOTHING,
         related_name="filters",
     )
-    filter_type = models.CharField(max_length=50)
-    filter_name = models.CharField(max_length=150)
-    filter_add_date = models.DateTimeField(auto_now_add=True)
-    filter_up_date = models.DateTimeField(
-        null=True,
-        blank=True,
-    )
-    is_active = models.BooleanField(default=True)
+    filter_type = models.CharField(max_length=30)
+    filter_name = models.CharField(max_length=30)
+    is_active = models.CharField(max_length=1)
 
     class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=["filter_type", "filter_name"],
-                name="unique_filter_type_name",
-            )
-        ]
+        managed = False
+        db_table = "filter"
+        unique_together = (("filter_type", "filter_name"),)
 
     def __str__(self):
         return self.filter_name
 
 
 class Resource(models.Model):
-    resource_id = models.BigAutoField(primary_key=True)
-
+    resource_id = models.CharField(max_length=8, primary_key=True)
     curator = models.ForeignKey(
         User,
-        on_delete=models.PROTECT,
+        on_delete=models.DO_NOTHING,
         related_name="resources",
     )
-
-    is_anonymous = models.BooleanField(default=False)
-
+    is_anonymous = models.CharField(max_length=1)
     source = models.ForeignKey(
         Source,
-        on_delete=models.PROTECT,
+        on_delete=models.DO_NOTHING,
         related_name="resources",
     )
-
     resource_title = models.CharField(max_length=150)
-
-    resource_url = models.URLField(max_length=2048)
-
-    resource_type = models.CharField(
-        max_length=50,
-        null=True,
-        blank=True,
-    )
-
-    resource_snippet = models.TextField(
-        null=True,
-        blank=True,
-    )
-
-    resource_up_date = models.DateTimeField(
-        null=True,
-        blank=True,
-    )
-
-    resource_pub_date = models.DateTimeField(
-        null=True,
-        blank=True,
-    )
-
-    resource_add_date = models.DateTimeField(
-        auto_now_add=True,
-    )
-
-    resource_format = models.CharField(
-        max_length=50,
-        null=True,
-        blank=True,
-    )
-
-    resource_duration_seconds = models.PositiveIntegerField(
-        null=True,
-        blank=True,
-    )
-
+    resource_url = models.CharField(max_length=767, unique=True)
+    resource_type = models.CharField(max_length=15)
+    resource_format = models.CharField(max_length=20)
+    resource_snippet = models.TextField(null=True, blank=True)
+    resource_pub_date = models.DateTimeField(null=True, blank=True)
+    resource_refresh_date = models.DateTimeField()
+    resource_duration = models.PositiveBigIntegerField(null=True, blank=True)
     price_model = models.ForeignKey(
         PriceModel,
-        on_delete=models.PROTECT,
-        null=True,
-        blank=True,
+        on_delete=models.DO_NOTHING,
         related_name="resources",
     )
-
-    price_reviewed = models.BooleanField(default=False)
-
-    price_reviewed_by = models.ForeignKey(
-        User,
-        on_delete=models.PROTECT,
-        null=True,
-        blank=True,
-        related_name="price_reviews",
-    )
-
-    price_reviewed_date = models.DateTimeField(
-        null=True,
-        blank=True,
-    )
-
-    other_metadata = models.JSONField(
-        null=True,
-        blank=True,
-    )
-
+    other_metadata = models.JSONField(null=True, blank=True)
+    is_active = models.CharField(max_length=1)
     categories = models.ManyToManyField(
         Category,
         through="ResourceCategory",
         related_name="resources",
     )
-
     filters = models.ManyToManyField(
         Filter,
         through="ResourceFilter",
         related_name="resources",
     )
-
     collections = models.ManyToManyField(
         "CuratedCollection",
         through="CollectionResource",
         related_name="resources",
     )
 
+    class Meta:
+        managed = False
+        db_table = "career_resource"
+
     def __str__(self):
         return self.resource_title
 
 
 class CuratedCollection(models.Model):
-    collection_id = models.BigAutoField(primary_key=True)
-
+    collection_id = models.CharField(max_length=8, primary_key=True)
     curator = models.ForeignKey(
         User,
-        on_delete=models.PROTECT,
+        on_delete=models.DO_NOTHING,
         related_name="collections",
     )
+    collection_name = models.CharField(max_length=100)
+    collection_description = models.TextField(null=True, blank=True)
+    collection_add_date = models.DateTimeField()
+    collection_up_date = models.DateTimeField(null=True, blank=True)
+    is_active = models.CharField(max_length=1)
 
-    collection_name = models.CharField(max_length=255)
-
-    collection_description = models.TextField(
-        null=True,
-        blank=True,
-    )
-
-    collection_add_date = models.DateTimeField(
-        auto_now_add=True,
-    )
-
-    collection_up_date = models.DateTimeField(
-        null=True,
-        blank=True,
-    )
-
-    is_active = models.BooleanField(default=True)
+    class Meta:
+        managed = False
+        db_table = "curated_collection"
 
     def __str__(self):
         return self.collection_name
 
 
 class ResourceCategory(models.Model):
-    resource = models.ForeignKey(
-        Resource,
-        on_delete=models.CASCADE,
-    )
-
-    category = models.ForeignKey(
-        Category,
-        on_delete=models.CASCADE,
-    )
+    pk = models.CompositePrimaryKey("resource_id", "category_id")
+    resource = models.ForeignKey(Resource, on_delete=models.DO_NOTHING)
+    category = models.ForeignKey(Category, on_delete=models.DO_NOTHING)
 
     class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=["resource", "category"],
-                name="unique_resource_category",
-            )
-        ]
+        managed = False
+        db_table = "resource_category"
 
     def __str__(self):
         return f"{self.resource} - {self.category}"
 
 
 class ResourceFilter(models.Model):
-    resource = models.ForeignKey(
-        Resource,
-        on_delete=models.CASCADE,
-    )
-
-    filter = models.ForeignKey(
-        Filter,
-        on_delete=models.CASCADE,
-    )
+    pk = models.CompositePrimaryKey("resource_id", "filter_id")
+    resource = models.ForeignKey(Resource, on_delete=models.DO_NOTHING)
+    filter = models.ForeignKey(Filter, on_delete=models.DO_NOTHING)
 
     class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=["resource", "filter"],
-                name="unique_resource_filter",
-            )
-        ]
+        managed = False
+        db_table = "resource_filter"
 
     def __str__(self):
         return f"{self.resource} - {self.filter}"
 
 
 class CollectionResource(models.Model):
+    pk = models.CompositePrimaryKey("collection_id", "resource_id")
     collection = models.ForeignKey(
         CuratedCollection,
-        on_delete=models.CASCADE,
+        on_delete=models.DO_NOTHING,
     )
-
-    resource = models.ForeignKey(
-        Resource,
-        on_delete=models.CASCADE,
-    )
-
+    resource = models.ForeignKey(Resource, on_delete=models.DO_NOTHING)
     sort_order = models.PositiveIntegerField()
-
-    add_date = models.DateTimeField(
-        auto_now_add=True,
-    )
+    add_date = models.DateTimeField()
 
     class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=["collection", "resource"],
-                name="unique_collection_resource",
-            ),
-            models.UniqueConstraint(
-                fields=["collection", "sort_order"],
-                name="unique_collection_sort_order",
-            ),
-        ]
+        managed = False
+        db_table = "collection_resources"
 
     def __str__(self):
         return f"{self.collection} - {self.resource}"
